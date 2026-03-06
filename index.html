@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <!-- Keep previews as minimal as possible when sharing -->
+    <title>...</title>
+    <meta name="robots" content="noimageindex, noarchive, nosnippet" />
+    <meta property="og:title" content="" />
+    <meta property="og:description" content="" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="" />
+    <meta name="twitter:description" content="" />
+    <!-- Fonts: Playfair Display, Lato, Dancing Script -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&family=Lato:wght@300;400;500;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f3e0d1;
+        --primary: #c0506a;
+        --accent: #f2a7b8;
+        --text: #3d1a24;
+        --highlight: #e8c84a;
+        --card: #fbe7ec;
+        --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.14);
+        --radius-lg: 24px;
+        --radius-md: 18px;
+        --radius-pill: 999px;
+        --page-max-width: 960px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        font-family: "Lato", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      body.modal-open .page-content {
+        filter: blur(6px);
+        pointer-events: none;
+        user-select: none;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      .page-content {
+        min-height: 100vh;
+      }
+
+      main {
+        max-width: var(--page-max-width);
+        margin: 0 auto;
+        padding: 20px 20px 64px;
+      }
+
+      @media (min-width: 768px) {
+        main {
+          padding: 32px 32px 72px;
+        }
+      }
+
+      /* Apology modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(18, 7, 10, 0.72);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        transition: opacity 260ms ease, visibility 260ms ease;
+      }
+
+      .modal-overlay.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .modal-card {
+        background: radial-gradient(circle at top left, #f7cedd 0, #fbe7ec 40%, #f3e0d1 100%);
+        padding: 28px 22px 24px;
+        border-radius: 24px;
+        box-shadow: var(--shadow-soft);
+        max-width: 420px;
+        width: calc(100% - 40px);
+        color: var(--text);
+        position: relative;
+        text-align: left;
+      }
+
+      @media (min-width: 480px) {
+        .modal-card {
+          padding: 32px 28px 28px;
+        }
+      }
+
+      .modal-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(192, 80, 106, 0.09);
+        color: var(--primary);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .modal-title {
+        margin: 14px 0 10px;
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.6rem, 1.2rem + 1vw, 1.9rem);
+        line-height: 1.2;
+      }
+
+      .modal-body {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 18px;
+      }
+
+      .modal-body span.highlight {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .modal-note {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.78rem;
+        opacity: 0.8;
+      }
+
+      .modal-primary-btn {
+        border: none;
+        border-radius: var(--radius-pill);
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(120deg, #c0506a, #f2a7b8);
+        color: #fff;
+        box-shadow: 0 10px 26px rgba(192, 80, 106, 0.38);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+        position: relative;
+        overflow: hidden;
+        transform-origin: center;
+        animation: modalPulse 1600ms ease-in-out infinite;
+      }
+
+      .modal-primary-btn span.icon {
+        font-size: 1rem;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        color: var(--text);
+        font-size: 18px;
+      }
+
+      .modal-close:focus-visible,
+      .modal-primary-btn:focus-visible {
+        outline: 2px solid var(--highlight);
+        outline-offset: 2px;
+      }
+
+      /* Hero */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 16px;
+        padding-bottom: 56px;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+      }
+
+      .hero-kicker {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: rgba(61, 26, 36, 0.65);
+        margin-bottom: 12px;
+      }
+
+      .hero-name {
+        font-family: "Dancing Script", cursive;
+        font-weight: 600;
+        font-size: clamp(3rem, 2.2rem + 3vw, 4.1rem);
+        color: var(--primary);
+        margin: 0 0 6px;
+      }
+
+      .hero-tagline {
+        font-family: "Playfair Display", serif;
+        font-weight: 500;
+        font-size: clamp(1.1rem, 0.9rem + 0.7vw, 1.35rem);
+        margin: 0 0 12px;
+      }
+
+      .hero-subcopy {
+        max-width: 420px;
+        margin: 0 auto;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        opacity: 0.9;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 18px;
+        padding: 8px 14px;
+        border-radius: var(--radius-pill);
+        background: rgba(232, 200, 74, 0.13);
+        font-size: 0.8rem;
+      }
+
+      .hero-badge-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 20%, #fff8da 0, #e8c84a 45%, #c08020 100%);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        color: #4b2600;
+      }
+
+      .hero-scroll {
+        position: absolute;
+        left: 50%;
+        bottom: 80px;
+        transform: translateX(-50%);
+        text-align: center;
+        font-size: 0.8rem;
+        color: rgba(61, 26, 36, 0.7);
+      }
+
+      .hero-scroll-indicator {
+        width: 20px;
+        height: 32px;
+        border-radius: 999px;
+        border: 1.5px solid rgba(61, 26, 36, 0.4);
+        margin: 8px auto 0;
+        position: relative;
+      }
+
+      .hero-scroll-indicator::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 6px;
+        width: 4px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(61, 26, 36, 0.7);
+        transform: translateX(-50%);
+        animation: scrollDot 1300ms ease-in-out infinite;
+      }
+
+      /* Background petals */
+      .petal-layer {
+        position: absolute;
+        inset: -40px -10px 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .petal {
+        position: absolute;
+        width: 18px;
+        height: 26px;
+        border-radius: 18px 18px 18px 0;
+        background: radial-gradient(circle at 20% 10%, #ffe4ed 0, #f2a7b8 40%, #c0506a 100%);
+        opacity: 0.75;
+        animation: petalFloat 18s linear infinite;
+      }
+
+      .petal:nth-child(1) {
+        left: 8%;
+        animation-duration: 20s;
+        animation-delay: -4s;
+        transform: scale(0.9) rotate(-10deg);
+      }
+      .petal:nth-child(2) {
+        left: 22%;
+        animation-duration: 16s;
+        animation-delay: -9s;
+        transform: scale(0.7) rotate(14deg);
+      }
+      .petal:nth-child(3) {
+        left: 38%;
+        animation-duration: 21s;
+        animation-delay: -2s;
+        transform: scale(0.8) rotate(-22deg);
+      }
+      .petal:nth-child(4) {
+        left: 58%;
+        animation-duration: 18s;
+        animation-delay: -12s;
+        transform: scale(0.75) rotate(18deg);
+      }
+      .petal:nth-child(5) {
+        left: 74%;
+        animation-duration: 23s;
+        animation-delay: -6s;
+        transform: scale(0.85) rotate(-16deg);
+      }
+      .petal:nth-child(6) {
+        left: 88%;
+        animation-duration: 19s;
+        animation-delay: -14s;
+        transform: scale(0.7) rotate(10deg);
+      }
+
+      /* Sections */
+      section {
+        margin-top: 56px;
+      }
+
+      @media (min-width: 768px) {
+        section {
+          margin-top: 72px;
+        }
+      }
+
+      .section-label {
+        font-size: 0.8rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(61, 26, 36, 0.6);
+        margin-bottom: 10px;
+      }
+
+      .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.4rem, 1.1rem + 1vw, 1.7rem);
+        margin: 0 0 14px;
+        color: var(--primary);
+      }
+
+      .section-body {
+        font-size: 0.98rem;
+        line-height: 1.9;
+      }
+
+      .section-soft {
+        background: rgba(255, 240, 243, 0.84);
+        border-radius: var(--radius-lg);
+        padding: 20px 18px 22px;
+      }
+
+      @media (min-width: 768px) {
+        .section-soft {
+          padding: 26px 26px 28px;
+        }
+      }
+
+      .section-soft .section-body {
+        max-width: 620px;
+      }
+
+      /* Cards section */
+      .qualities-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 10px;
+      }
+
+      @media (min-width: 640px) {
+        .qualities-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .quality-card {
+        background: var(--card);
+        border-radius: var(--radius-md);
+        padding: 14px 14px 16px;
+        box-shadow: 0 12px 30px rgba(192, 80, 106, 0.12);
+        position: relative;
+        overflow: hidden;
+        transform-origin: center;
+        transition: transform 220ms ease, box-shadow 220ms ease;
+      }
+
+      .quality-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.5), transparent 55%);
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .quality-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(242, 167, 184, 0.25);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+      }
+
+      .quality-title {
+        font-weight: 600;
+        margin: 0 0 4px;
+        font-size: 0.95rem;
+      }
+
+      .quality-copy {
+        font-size: 0.86rem;
+        line-height: 1.7;
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .quality-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 18px 40px rgba(192, 80, 106, 0.24);
+        }
+
+        .quality-card:hover::before {
+          opacity: 1;
+        }
+      }
+
+      /* Poetic section gradient */
+      .soft-gradient {
+        border-radius: var(--radius-lg);
+        padding: 22px 18px 22px;
+        background: radial-gradient(circle at 10% 0, rgba(255, 240, 243, 0.9) 0, rgba(242, 167, 184, 0.1) 35%, rgba(253, 246, 240, 1) 100%);
+        transition: background-position 1400ms ease;
+        background-size: 120% 120%;
+        background-position: 0% 0%;
+      }
+
+      .soft-gradient.shifted {
+        background-position: 100% 100%;
+      }
+
+      .soft-gradient .section-body {
+        max-width: 640px;
+      }
+
+      /* Closing */
+      .closing {
+        text-align: center;
+        margin-top: 68px;
+      }
+
+      .closing-kicker {
+        font-size: 0.82rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(61, 26, 36, 0.65);
+        margin-bottom: 10px;
+      }
+
+      .closing-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(1.7rem, 1.4rem + 1vw, 2rem);
+        margin: 0 0 10px;
+        color: var(--primary);
+      }
+
+      .closing-main {
+        font-family: "Dancing Script", cursive;
+        font-size: clamp(2.1rem, 1.8rem + 2vw, 2.8rem);
+        margin: 6px 0 10px;
+        color: var(--primary);
+      }
+
+      .closing-copy {
+        max-width: 520px;
+        margin: 0 auto 16px;
+        font-size: 0.95rem;
+        line-height: 1.9;
+      }
+
+      .closing-signoff {
+        font-size: 0.86rem;
+        opacity: 0.85;
+      }
+
+      .closing-floating {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        animation: floatSoft 4200ms ease-in-out infinite;
+      }
+
+      /* Scroll animations */
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(22px);
+        transition: opacity 520ms ease, transform 520ms ease;
+      }
+
+      .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .animate-stagger-parent > .animate-stagger {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 520ms ease, transform 520ms ease;
+      }
+
+      .animate-stagger-parent.visible > .animate-stagger:nth-child(1) {
+        transition-delay: 60ms;
+      }
+      .animate-stagger-parent.visible > .animate-stagger:nth-child(2) {
+        transition-delay: 140ms;
+      }
+      .animate-stagger-parent.visible > .animate-stagger:nth-child(3) {
+        transition-delay: 220ms;
+      }
+
+      .animate-stagger-parent.visible > .animate-stagger {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .hero-inner {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 620ms ease, transform 620ms ease;
+      }
+
+      .hero-inner.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Keyframes */
+      @keyframes modalPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes scrollDot {
+        0% {
+          transform: translate(-50%, 0);
+          opacity: 0.15;
+        }
+        40% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translate(-50%, 12px);
+          opacity: 0;
+        }
+      }
+
+      @keyframes petalFloat {
+        0% {
+          transform: translate3d(0, 40px, 0) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.75;
+        }
+        50% {
+          transform: translate3d(10px, -30vh, 0) rotate(12deg);
+        }
+        100% {
+          transform: translate3d(-4px, -90vh, 0) rotate(-18deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes floatSoft {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.001ms !important;
+        }
+
+        .modal-primary-btn {
+          animation: none;
+        }
+      }
+
+      /* Mobile tweaks */
+      @media (max-width: 767px) {
+        .hero {
+          align-items: center;
+        }
+
+        .hero-subcopy {
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="modal-open">
+    <!-- Apology Modal -->
+    <div
+      class="modal-overlay"
+      id="apology-modal"
+      aria-labelledby="apology-title"
+      aria-modal="true"
+      role="dialog"
+    >
+      <div class="modal-card">
+        <button
+          class="modal-close"
+          type="button"
+          aria-label="Close"
+          id="apology-close"
+        >
+          ×
+        </button>
+        <div class="modal-label">
+          <span>from the heart</span>
+        </div>
+        <h2 class="modal-title" id="apology-title">Hey, Siyu…</h2>
+        <div class="modal-body">
+          Sometimes I know I can be a little too much, I don&apos;t always say this out loud(sometimes I do but still), but
+          <span class="highlight">you mean more to me than I ever manage to put into words</span>.
+        </div>
+        <div class="modal-footer">
+          <p class="modal-note">
+            Just something small I made to remind
+            you how special you are to me.
+          </p>
+          <button
+            class="modal-primary-btn"
+            type="button"
+            id="open-gift-btn"
+          >
+            <span class="icon">🎁</span>
+            <span>Open your gift</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <main>
+        <!-- Hero -->
+        <section class="hero">
+          <div class="petal-layer" aria-hidden="true">
+            <div class="petal"></div>
+            <div class="petal"></div>
+            <div class="petal"></div>
+            <div class="petal"></div>
+            <div class="petal"></div>
+            <div class="petal"></div>
+          </div>
+          <div class="hero-inner" id="hero-inner">
+            <div class="hero-kicker">you mean the world to me</div>
+            <h1 class="hero-name">Siyu</h1>
+            <p class="hero-tagline">This one&apos;s for you.</p>
+            <p class="hero-subcopy">
+              If I could gather every moment you&apos;ve made lighter, every
+              worry you&apos;ve softened, every time just your presence helped
+              me breathe a little easier, I actually cant do that but still a small gesture just for you.
+            </p>
+            <div class="hero-badge">
+              <div class="hero-badge-icon">✨</div>
+              <span>A tiny corner of the internet that belongs to you.</span>
+            </div>
+          </div>
+          <div class="hero-scroll" aria-hidden="true">
+            <div>Scroll to continue</div>
+            <div class="hero-scroll-indicator"></div>
+          </div>
+        </section>
+
+        <!-- Section 1: The Day You Came Into My Life -->
+        <section class="animate-on-scroll">
+          <div class="section-soft">
+            <div class="section-label">Chapter one</div>
+            <h2 class="section-title">The day you came into my life</h2>
+            <div class="section-body">
+              I don&apos;t think there was a single, cinematic moment where the
+              world suddenly changed color but looking back, I can
+              see&nbsp;it. Somewhere between the first time we really talked and
+              the first time I realized I was comfortable simply existing around
+              you, things shifted. The days felt a bit less heavy. The quiet
+              spaces felt a bit less loud. And without announcing it, you became
+              <em>a safe place</em> in a world that doesn&apos;t always feel
+              kind.
+              <br /><br />
+              The journey of you being just a random stranger who I accidently just met 
+              and now has the position of being my JATT. It's just so good, and just to lyk 
+              I am just too grateful that I am your SHAKTIMAAN and you actually feel safe sharing 
+              all of your stuff with me, I just love that fact so fucking much you cant even imagine.
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: What the world looks like with you in it -->
+        <section class="animate-on-scroll">
+          <div class="soft-gradient" id="impact-section">
+            <div class="section-label">Chapter Two</div>
+            <h2 class="section-title">
+              What the world looks like with you in it
+            </h2>
+            <div class="section-body">
+              With you in it, the world is a little less sharp at the edges.
+              There&apos;s an extra seat at the table where people feel
+              understood. There&apos;s at least one person out there who will
+              notice when someone&apos;s gone quiet, who will send the small
+              message, who will remember the thing everyone else has already
+              forgotten.
+              <br /><br />
+              Because you exist, there are days that end softer than they
+              started, smiles that happen that otherwise wouldn&apos;t have, and
+              people who feel just a bit less alone. Maybe you don&apos;t always
+              see that impact from where you&apos;re standing but I do. And I&apos;m
+              endlessly grateful that I get to live in a version of the world
+              that has you in&nbsp;it.I actually can spend hours nd hours just listening nd talking to you
+              without ever getting bored. 
+            </div>
+          </div>
+        </section>
+
+        <!-- Closing -->
+        <section class="closing animate-on-scroll">
+          <div class="closing-floating">
+            <div class="closing-kicker">if you remember nothing else</div>
+            <h2 class="closing-title">Please keep this with you</h2>
+            <p class="closing-main">You are so, so special to me.</p>
+          </div>
+          <p class="closing-copy">
+            Not because you&apos;re always strong. Not because you&apos;re always
+            okay. Not because you&apos;re perfect (you&apos;re human, and I love
+            that about you). You are special to me simply because you&apos;re
+            my Siya, my Jatt, Meri Kaju Katli.
+          </p>
+          <p class="closing-signoff">
+            Thank you for being here. Thank you for being you. I&apos;m so, so
+            grateful our paths crossed.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        const body = document.body;
+        const modal = document.getElementById("apology-modal");
+        const openGiftBtn = document.getElementById("open-gift-btn");
+        const closeBtn = document.getElementById("apology-close");
+        const heroInner = document.getElementById("hero-inner");
+        const impactSection = document.getElementById("impact-section");
+
+        function closeModal() {
+          if (!modal || modal.classList.contains("hidden")) return;
+          modal.classList.add("hidden");
+          body.classList.remove("modal-open");
+          if (heroInner) {
+            requestAnimationFrame(function () {
+              heroInner.classList.add("visible");
+            });
+          }
+        }
+
+        if (openGiftBtn) {
+          openGiftBtn.addEventListener("click", closeModal);
+        }
+        if (closeBtn) {
+          closeBtn.addEventListener("click", closeModal);
+        }
+        if (modal) {
+          modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+              closeModal();
+            }
+          });
+        }
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeModal();
+          }
+        });
+
+        // Scroll-triggered animations
+        const prefersReducedMotion = window.matchMedia
+          ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          : false;
+
+        if (!prefersReducedMotion && "IntersectionObserver" in window) {
+          const scrollEls = document.querySelectorAll(".animate-on-scroll");
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            {
+              threshold: 0.2,
+            }
+          );
+
+          scrollEls.forEach((el) => observer.observe(el));
+        } else {
+          // Fallback: show everything if no IntersectionObserver or reduced motion
+          document
+            .querySelectorAll(".animate-on-scroll")
+            .forEach((el) => el.classList.add("visible"));
+          document
+            .querySelectorAll(".animate-stagger-parent")
+            .forEach((el) => el.classList.add("visible"));
+          if (heroInner) {
+            heroInner.classList.add("visible");
+          }
+        }
+
+        // Gradient subtle shift when section comes into view
+        if (impactSection && "IntersectionObserver" in window) {
+          const gradientObserver = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  impactSection.classList.add("shifted");
+                  gradientObserver.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.3 }
+          );
+          gradientObserver.observe(impactSection);
+        }
+      })();
+    </script>
+  </body>
+</html>
+
