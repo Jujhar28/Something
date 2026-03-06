@@ -705,10 +705,7 @@
           <span>from the heart</span>
         </div>
         <h2 class="modal-title" id="apology-title">Hey, Siyu…</h2>
-        <div class="modal-body">
-          Sometimes I know I can be a little too much, I don&apos;t always say this out loud(sometimes I do but still), but
-          <span class="highlight">you mean more to me than I ever manage to put into words</span>.
-        </div>
+        <div class="modal-body" id="modal-body"></div>
         <div class="modal-footer">
           <p class="modal-note">
             Just something small I made to remind
@@ -741,12 +738,8 @@
           <div class="hero-inner" id="hero-inner">
             <div class="hero-kicker">you mean the world to me</div>
             <h1 class="hero-name">Siyu</h1>
-            <p class="hero-tagline">This one&apos;s for you.</p>
-            <p class="hero-subcopy">
-              If I could gather every moment you&apos;ve made lighter, every
-              worry you&apos;ve softened, every time just your presence helped
-              me breathe a little easier, I actually cant do that but still a small gesture just for you.
-            </p>
+            <p class="hero-tagline" id="hero-tagline"></p>
+            <p class="hero-subcopy" id="hero-subcopy"></p>
             <div class="hero-badge">
               <div class="hero-badge-icon">✨</div>
               <span>A tiny corner of the internet that belongs to you.</span>
@@ -763,21 +756,7 @@
           <div class="section-soft">
             <div class="section-label">Chapter one</div>
             <h2 class="section-title">The day you came into my life</h2>
-            <div class="section-body">
-              I don&apos;t think there was a single, cinematic moment where the
-              world suddenly changed color but looking back, I can
-              see&nbsp;it. Somewhere between the first time we really talked and
-              the first time I realized I was comfortable simply existing around
-              you, things shifted. The days felt a bit less heavy. The quiet
-              spaces felt a bit less loud. And without announcing it, you became
-              <em>a safe place</em> in a world that doesn&apos;t always feel
-              kind.
-              <br /><br />
-              The journey of you being just a random stranger who I accidently just met 
-              and now has the position of being my JATT. It's just so good, and just to lyk 
-              I am just too grateful that I am your SHAKTIMAAN and you actually feel safe sharing 
-              all of your stuff with me, I just love that fact so fucking much you cant even imagine.
-            </div>
+            <div class="section-body" id="section-one-body"></div>
           </div>
         </section>
 
@@ -788,22 +767,7 @@
             <h2 class="section-title">
               What the world looks like with you in it
             </h2>
-            <div class="section-body">
-              With you in it, the world is a little less sharp at the edges.
-              There&apos;s an extra seat at the table where people feel
-              understood. There&apos;s at least one person out there who will
-              notice when someone&apos;s gone quiet, who will send the small
-              message, who will remember the thing everyone else has already
-              forgotten.
-              <br /><br />
-              Because you exist, there are days that end softer than they
-              started, smiles that happen that otherwise wouldn&apos;t have, and
-              people who feel just a bit less alone. Maybe you don&apos;t always
-              see that impact from where you&apos;re standing but I do. And I&apos;m
-              endlessly grateful that I get to live in a version of the world
-              that has you in&nbsp;it.I actually can spend hours nd hours just listening nd talking to you
-              without ever getting bored. 
-            </div>
+            <div class="section-body" id="section-three-body"></div>
           </div>
         </section>
 
@@ -814,16 +778,8 @@
             <h2 class="closing-title">Please keep this with you</h2>
             <p class="closing-main">You are so, so special to me.</p>
           </div>
-          <p class="closing-copy">
-            Not because you&apos;re always strong. Not because you&apos;re always
-            okay. Not because you&apos;re perfect (you&apos;re human, and I love
-            that about you). You are special to me simply because you&apos;re
-            my Siya, my Jatt, Meri Kaju Katli.
-          </p>
-          <p class="closing-signoff">
-            Thank you for being here. Thank you for being you. I&apos;m so, so
-            grateful our paths crossed.
-          </p>
+          <p class="closing-copy" id="closing-copy"></p>
+          <p class="closing-signoff" id="closing-signoff"></p>
         </section>
       </main>
     </div>
@@ -836,6 +792,13 @@
         const closeBtn = document.getElementById("apology-close");
         const heroInner = document.getElementById("hero-inner");
         const impactSection = document.getElementById("impact-section");
+        const modalBodyEl = document.getElementById("modal-body");
+        const heroTaglineEl = document.getElementById("hero-tagline");
+        const heroSubcopyEl = document.getElementById("hero-subcopy");
+        const sectionOneBodyEl = document.getElementById("section-one-body");
+        const sectionThreeBodyEl = document.getElementById("section-three-body");
+        const closingCopyEl = document.getElementById("closing-copy");
+        const closingSignoffEl = document.getElementById("closing-signoff");
 
         function closeModal() {
           if (!modal || modal.classList.contains("hidden")) return;
@@ -917,6 +880,32 @@
           );
           gradientObserver.observe(impactSection);
         }
+
+        // Inject heartfelt copy via JavaScript so link previews
+        // that don't run JS can't easily read the inner content.
+        const copy = {
+          modalBody:
+            'Sometimes I know I can be a little too much, say the wrong thing, or go quiet when you deserve the opposite. For all of that, I&apos;m genuinely sorry. I don&apos;t always say this out loud (sometimes I do, but still), but <span class="highlight">you mean more to me than I ever manage to put into words</span>.',
+          heroTagline: "This one&apos;s for you.",
+          heroSubcopy:
+            "If I could gather every moment you&apos;ve made lighter, every worry you&apos;ve softened, every time just your presence helped me breathe a little easier &mdash; I&apos;d put all of that here. I can&apos;t quite do that, but I can give you this small corner that&apos;s only for you.",
+          sectionOne:
+            "I don&apos;t think there was a single, cinematic moment where the world suddenly changed color, but looking back, I can see it. Somewhere between the first time we really talked and the first time I realized I was comfortable simply existing around you, things shifted. The days felt a bit less heavy. The quiet spaces felt a bit less loud. And without announcing it, you became <em>a safe place</em> in a world that doesn&apos;t always feel kind.<br /><br />The journey of you being just a random stranger I accidentally met and now becoming my JATT is just so good. I&apos;m just too grateful that I get to be your SHAKTIMAAN and that you actually feel safe sharing all of your stuff with me. I love that fact so much more than you can imagine.",
+          sectionThree:
+            "With you in it, the world is a little less sharp at the edges. There&apos;s an extra seat at the table where people feel understood. There&apos;s at least one person out there who will notice when someone&apos;s gone quiet, who will send the small message, who will remember the thing everyone else has already forgotten.<br /><br />Because you exist, there are days that end softer than they started, smiles that happen that otherwise wouldn&apos;t have, and people who feel just a bit less alone. Maybe you don&apos;t always see that impact from where you&apos;re standing, but I do. And I&apos;m endlessly grateful that I get to live in a version of the world that has you in it. I can spend hours and hours just listening and talking to you without ever getting bored.",
+          closingCopy:
+            "Not because you&apos;re always strong. Not because you&apos;re always okay. Not because you&apos;re perfect (you&apos;re human, and I love that about you). You are special to me simply because you&apos;re my Siya, my Jatt, my Kaju Katli.",
+          closingSignoff:
+            "Thank you for being here. Thank you for being you. I&apos;m so, so grateful our paths crossed."
+        };
+
+        if (modalBodyEl) modalBodyEl.innerHTML = copy.modalBody;
+        if (heroTaglineEl) heroTaglineEl.innerHTML = copy.heroTagline;
+        if (heroSubcopyEl) heroSubcopyEl.innerHTML = copy.heroSubcopy;
+        if (sectionOneBodyEl) sectionOneBodyEl.innerHTML = copy.sectionOne;
+        if (sectionThreeBodyEl) sectionThreeBodyEl.innerHTML = copy.sectionThree;
+        if (closingCopyEl) closingCopyEl.innerHTML = copy.closingCopy;
+        if (closingSignoffEl) closingSignoffEl.innerHTML = copy.closingSignoff;
       })();
     </script>
   </body>
